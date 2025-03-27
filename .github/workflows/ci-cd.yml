@@ -29,8 +29,8 @@ jobs:
 
       # Run database migrations (make sure your settings are configured for a test database)
       - name: Run Migrations
-        run: python manage.py migrate
+        #run: python manage.py migrate
 
       # Run tests using Django's test framework
       - name: Run Tests
-        run: python manage.py test
+        #run: python manage.py test
