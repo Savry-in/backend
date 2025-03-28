@@ -7,6 +7,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
@@ -14,17 +15,35 @@ jobs:
       - name: Set Up Python
         uses: actions/setup-python@v3
         with:
-          python-version: "3.10"  
+          python-version: "3.10"
 
       - name: Install Dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      # Provide secrets as environment variables
+      - name: Decode & Export SSL Cert
+        env:
+          DB_NAME: ${{ secrets.DB_NAME }}
+          DB_USER: ${{ secrets.DB_USER }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_HOST: ${{ secrets.DB_HOST }}
+          DB_PORT: ${{ secrets.DB_PORT }}
+          SSL_ROOT_CERT_B64: ${{ secrets.SSL_ROOT_CERT_B64 }}
+        run: |
+          # Decode the base64-encoded certificate into a file
+          echo "$SSL_ROOT_CERT_B64" | base64 -d > root.crt
+
+          # Export environment variables so Django can read them
+          export DB_NAME DB_USER DB_PASSWORD DB_HOST DB_PORT
+          # For SSL, set SSL_ROOT_CERT to the path of the decoded file
+          export SSL_ROOT_CERT="$PWD/root.crt"
+
+          # Just printing to confirm variables are set (remove in production)
+          echo "DB_NAME=$DB_NAME"
+          echo "SSL_ROOT_CERT=$SSL_ROOT_CERT"
+
       - name: Run Migrations
         run: |
-          python manage.py migrate --check
-
-      # - name: Run Tests
-      #   run: |
-      #     python manage.py test
+          python manage.py migrate
