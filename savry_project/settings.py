@@ -39,7 +39,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'account',
+    'catalog',
+    'inventory',
+    'notifications',
 ]
+
+AUTH_USER_MODEL = 'account.CustomUser'
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -88,7 +95,7 @@ DATABASES = {
         'PORT': env('DB_PORT'),
         'OPTIONS': {
             'sslmode': 'verify-full',
-            'sslrootcert': env('SSL_ROOT_CERT'),
+            'sslrootcert':'C:/Users/shukl/AppData/Roaming/postgresql/root.crt',
         },
     }
 }
